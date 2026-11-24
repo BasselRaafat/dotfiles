@@ -2,53 +2,103 @@
 
 Personal Hyprland, Waybar, Rofi, Kitty, Waypaper, and Zsh configuration, managed with [chezmoi](https://www.chezmoi.io/).
 
-These are personal configs, not a one-command installer. Review and adapt them for your machine before applying.
+These are personal configs, not a universal installer. Review and adapt the hardware-specific settings before applying them.
 
 ## What's included
 
-- Hyprland configuration and helper scripts
+- Hyprland config and helper scripts
 - Waybar panel and styling
 - Rofi launcher and theme
 - Kitty terminal
 - Waypaper settings
-- Zsh startup, aliases, functions, and history search that leaves the cursor at the end of the recalled command
+- Zsh startup, aliases, functions, and history search that leaves the cursor at the end of recalled commands
 
-Wallpaper files are not included. The wallpaper picker looks in `~/Pictures/Wallpapers` and `/usr/share/wallpapers`.
+Wallpapers are not included. The wallpaper picker searches `~/Pictures/Wallpapers` and `/usr/share/wallpapers`.
 
-## Core software
+## Install dependencies
 
-Install the equivalent packages for your distribution:
+### Ubuntu 26.10
 
-- Hyprland and `hyprland-huiutils` (the Lua configuration uses the helper library)
-- Waybar, Rofi, Kitty, Hyprpaper, Waypaper, and Hypridle
-- Hyprland and GTK XDG desktop portal backends, plus `xdg-desktop-portal`
-- `hyprpolkitagent`
-- `wl-clipboard`, `grim`, and `slurp` for clipboard and screenshots
-- NetworkManager applet and connection editor
-- `brightnessctl`, WirePlumber (`wpctl`), and `systemctl` for media, brightness, and idle actions
-- Firefox and Nautilus for the browser and file manager keybindings
-- Zsh, Starship, Zinit, fzf, zoxide, and fastfetch for the shell configuration
-- JetBrainsMono Nerd Font and the Bibata Modern Ice cursor theme
+Hyprland's official guide recommends the Ubuntu archive package on 26.10. Enable Universe, update package metadata, and install the desktop components:
 
-The Waybar battery module expects battery `BAT0` and adapter `ADP0`. Change these names if your hardware uses different power-supply names. The Hyprland monitor rule currently targets `eDP-1`; change it for a different display. The cursor startup command also expects `Bibata-Modern-Ice` to be installed.
+```sh
+sudo add-apt-repository universe
+sudo apt update
+sudo apt install \
+  hyprland hyprland-guiutils hypridle hyprpaper hyprpolkitagent \
+  waybar rofi kitty \
+  xdg-desktop-portal xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
+  wl-clipboard grim slurp \
+  network-manager-gnome nm-connection-editor \
+  brightnessctl wireplumber \
+  firefox nautilus \
+  zsh starship fzf zoxide fastfetch \
+  fonts-jetbrains-mono python3-pipx python3-gi python3-platformdirs \
+  python3-pil python3-screeninfo
+```
 
-## Ubuntu notes
+Install Waypaper and its Hyprpaper backend:
 
-Hyprland packaging and version availability depend on the Ubuntu release. Check the [official Hyprland installation guide](https://wiki.hypr.land/getting-started/installation/) and use the instructions for your exact Ubuntu version. Do not use Fedora package names such as `akmod-nvidia` on Ubuntu. Install NVIDIA drivers through Ubuntu's recommended driver tooling when needed; NVIDIA/Wayland behavior depends on the driver and system configuration.
+```sh
+pipx install waypaper
+```
 
-Ubuntu package names can differ from Fedora names, and some components may not be available in the enabled Ubuntu repositories on older releases. Avoid mixing random PPAs or build instructions from different Hyprland versions: Hyprland and its companion libraries need compatible versions. If a component is unavailable, follow its upstream installation instructions for the Ubuntu release rather than substituting a Fedora command.
+The Zsh config bootstraps Zinit and its plugins on the first shell startup. It expects Starship, fzf, and zoxide to be installed as packages above.
 
-For a laptop with NVIDIA graphics, test the Ubuntu-provided Hyprland and driver combination before copying additional NVIDIA environment variables or kernel-module setup from another distro.
+Ubuntu 26.04 and older releases may have an outdated Hyprland package or lack some components. Check the [official Hyprland installation guide](https://wiki.hypr.land/getting-started/installation/) for the exact Ubuntu release before installing; don't add arbitrary PPAs or mix packages built for different Hyprland versions.
+
+### Fedora
+
+Enable a Hyprland package source suitable for your Fedora release first. Then install the desktop and shell packages (some Hyprland ecosystem packages may not be in Fedora's default repositories):
+
+```sh
+sudo dnf install \
+  hyprland hyprland-guiutils hypridle hyprpaper hyprpolkitagent \
+  waybar rofi kitty \
+  xdg-desktop-portal xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
+  wl-clipboard grim slurp \
+  NetworkManager-applet nm-connection-editor \
+  brightnessctl wireplumber \
+  firefox nautilus \
+  zsh starship fzf zoxide fastfetch \
+  jetbrains-mono-fonts python3-pipx
+```
+
+Waypaper can be installed with `pipx` and uses Hyprpaper as its wallpaper backend:
+
+```sh
+pipx install waypaper
+```
+
+If Waypaper's Python dependencies fail to build on Fedora, install the Fedora `cairo-gobject-devel` package first, as noted in [Waypaper's install guide](https://anufrievroman.gitbook.io/waypaper/installation).
+
+### Optional NVIDIA driver
+
+NVIDIA is not configured by this dotfiles repo. On Ubuntu, use Ubuntu's driver tool if the computer has NVIDIA graphics:
+
+```sh
+sudo ubuntu-drivers install
+```
+
+On Fedora, install the NVIDIA driver using the instructions for the Fedora release and its enabled RPM Fusion/COPR setup. Do not use Fedora's `akmod-nvidia` package name on Ubuntu.
 
 ## Before applying on another computer
 
-Some tracked settings currently contain this machine's absolute `/home/bassel` paths, and the idle script is invoked using one of them. Replace those paths with `$HOME`-based paths (or portable relative paths) before applying this repo under another username. Review these files in particular:
+Some tracked files still contain this machine's `/home/bassel` absolute paths. Replace them with portable paths before applying under another username. Review:
 
 - `dot_config/hypr/hypridle.conf`
 - `dot_config/rofi/config.rasi`
 - `dot_config/waypaper/config.ini`
+- `dot_zsh/dot_zshrc` (Starship config path)
 
-Also review the monitor name and Waybar battery names above. Then preview changes before applying:
+Hardware-specific values also need review:
+
+- The Hyprland monitor rule targets `eDP-1` and sets scale to `1.25`.
+- The Waybar battery module expects `BAT0` and `ADP0`.
+- The cursor command expects the `Bibata-Modern-Ice` cursor theme.
+- The wallpaper folder defaults to `~/Pictures/Wallpapers`.
+
+On a new machine, install dependencies, install/configure your cursor theme and wallpapers, then preview and apply the configs:
 
 ```sh
 chezmoi init <YOUR_GITHUB_USERNAME>
@@ -56,8 +106,8 @@ chezmoi diff
 chezmoi apply
 ```
 
-Install packages before applying the configs, then log into the Hyprland session. Keep this repository private if it contains personal details you do not want public.
+Log out and choose the Hyprland session at the login screen. Keep this repo private if it contains personal details you do not want public.
 
 ## Optional tools
 
-Neovim, Vim, Yazi, VLC, htop/btop, Cargo, Node.js/npm, and Lua are personal tools rather than requirements for starting the configured desktop. Install them only if you want those tools too.
+Neovim, Vim, Yazi, VLC, htop/btop, Cargo, Node.js/npm, and Lua are personal tools, not requirements for the configured desktop.
