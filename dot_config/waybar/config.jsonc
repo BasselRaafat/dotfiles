@@ -1,0 +1,44 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "spacing": 8,
+  "modules-left": ["hyprland/workspaces", "hyprland/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["network", "battery", "pulseaudio", "cpu", "memory", "tray"],
+  "hyprland/workspaces": {
+    "format": "{name}",
+    "on-click": "activate"
+  },
+  "hyprland/window": {
+    "max-length": 50
+  },
+  "clock": {
+    "format": "{:%a %d %b  %H:%M}",
+    "tooltip": false
+  },
+  "network": {
+    "format-wifi": "  {essid}",
+    "format-ethernet": "󰈀 connected",
+    "format-disconnected": "󰖪 offline",
+    "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+  },
+  "battery": {
+    "bat": "BAT0",
+    "adapter": "ADP0",
+    "interval": 60,
+    "states": {"warning": 30, "critical": 15},
+    "format": "🔋 {capacity}%",
+    "format-charging": "🔌 {capacity}%",
+    "format-plugged": "🔌 {capacity}%",
+    "format-full": "🔋 100%"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁 muted",
+    "format-icons": {"default": ["󰕿", "󰖀", "󰕾"]}
+  },
+  "cpu": {"format": "CPU {usage}%", "interval": 5},
+  "memory": {"format": "RAM {percentage}%", "interval": 5},
+  "tray": {"spacing": 8}
+}

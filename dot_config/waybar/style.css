@@ -1,0 +1,32 @@
+* {
+  font-family: "JetBrains Mono", sans-serif;
+  font-size: 12px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: rgba(27, 29, 31, 0.96);
+  color: #e3e6e8;
+}
+
+#workspaces button,
+#window,
+#clock,
+#network,
+#battery,
+#pulseaudio,
+#cpu,
+#memory,
+#tray {
+  padding: 0 8px;
+}
+
+#workspaces button.active {
+  color: #f1f3f4;
+  border-bottom: 2px solid #b5bbc0;
+}
+
+#workspaces button:hover {
+  background: #34383b;
+  box-shadow: none;
+}
